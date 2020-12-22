@@ -25,6 +25,13 @@ export const setLocalShortcut = <S extends string>(
   ]
 }
 
+export const deleteLocalShortcut = <S extends string>(
+  accelerator: Accelerator<S>,
+  window: BrowserWindow,
+): void => {
+  delete localShortcutMap[`${accelerator}-${window.id}`]
+}
+
 export const getGlobalShortcut = <S extends string>(
   accelerator: Accelerator<S>,
 ): (_: Event, w: BrowserWindow) => void =>

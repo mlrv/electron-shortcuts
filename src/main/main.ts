@@ -2,7 +2,7 @@ import { Accelerator, RegisterOptions } from "./keys"
 import { BrowserWindow, Input, Event, app } from "electron"
 import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty } from "./utils"
 import { inputProperties } from "./input"
-import { getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
+import { deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
 
 export const isRegistered = <S extends string>(
   accelerator: Accelerator<S>,
@@ -125,8 +125,13 @@ export const unregister = <S extends string>(
   const handler = getLocalShortcut(accelerator, window)?.[0]
   const webContents = getLocalShortcut(accelerator, window)?.[1]
 
+  const doUnregister = () => {
+    webContents.removeListener("before-input-event", handler)
+    deleteLocalShortcut(accelerator, window) 
+  }
+
   webContents
-    ? webContents.removeListener("before-input-event", handler)
+    ? doUnregister()
     : constVoid()
 }
 
