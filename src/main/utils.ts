@@ -13,7 +13,7 @@ export const split = <S extends string>(
   )
 
   const rest = components.filter(
-    (c): c is NonModifier => !isModifier(c) // something better?
+    (c): c is NonModifier => !isModifier(c)
   )
 
   return [modifiers, rest]
@@ -23,7 +23,7 @@ export const split = <S extends string>(
 export const normalizeModifiers = (
   modifiers: Modifier[]
 ): NormalizedModifier[] => [
-  ...new Set(modifiers.map(normalizeModifier)) // see if I want to keep this
+  ...new Set(modifiers.map(normalizeModifier))
 ]
 
 // Given a `NormalizedModifier`, map it to the corresponding
@@ -32,7 +32,7 @@ export const normalizedModifierToInputProperty = (
   normalizedModifier: NormalizedModifier
 ): InputProperty => {
   switch (normalizedModifier) {
-    case "Super": // could do this earlier
+    case "Super":
     case "Cmd":
       return "meta"
     case "Ctrl":
@@ -48,7 +48,7 @@ export const normalizedModifierToInputProperty = (
 export const constVoid = (): void => {}
 
 // `Modifier` type guard
-const isModifier = (
+export const isModifier = (
   str: string
 ): str is Modifier => [
   "Command",
@@ -65,10 +65,10 @@ const isModifier = (
 ].includes(str)
 
 // Normalize a `Modifier` key to a common subset
-const normalizeModifier = (
+export const normalizeModifier = (
   modifier: Modifier
 ): NormalizedModifier => {
-  switch (modifier) { // Verify
+  switch (modifier) {
     case "Cmd":
     case "Command":
     case "CmdOrCtrl":
