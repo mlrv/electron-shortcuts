@@ -102,7 +102,7 @@ export const register = <S extends string>(
   
   const onKeyUp = (): void => constVoid()
   const onKeyDown = (input: Input): void => {
-    return input.key === nonModifier && inputProperties.every(
+    return input.key.toLowerCase() === nonModifier.toLowerCase() && inputProperties.every(
       p => input[p]
     ) ? f() : constVoid()
   }
@@ -114,5 +114,5 @@ export const register = <S extends string>(
   )
 }
 
-// register('Cmd+Shift+F1', () => {}, null as any)
+// register('Cmd+Shift+a', () => {}, null as any)
 // register('Cmd+Ops', () => {})
