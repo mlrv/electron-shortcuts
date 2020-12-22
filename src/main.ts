@@ -1,5 +1,5 @@
 import { Accelerator, Modifier, NonModifier, NormalizedModifier, RegisterOptions } from "./keys"
-import { BrowserWindow, Input, Event, app } from "electron"
+import { BrowserWindow, Input, Event, app, WebContents } from "electron"
 import { constVoid } from "./utils"
 import { InputProperty, inputProperties } from "./input"
 
@@ -88,30 +88,39 @@ const normalizedModifierToInputProperty = (
   }
 }
 
+const localShortcutMap: Record<string, [ // lifecycle?
+  (_: Event, i: Input) => void,
+  WebContents,
+]> = {}
+
+const globalShortcutMap: Record<string, (_: Event, w: BrowserWindow) => void> = {}
+
+export const isRegistered = <S extends string>(
+  accelerator: Accelerator<S>,
+  window: BrowserWindow,
+): boolean => { // return something else? Maybe the windows?
+  return !!localShortcutMap[`${accelerator}-${window.id}`]
+}
+
 // Register a shortcut for the given accelerator string
+// on the given window
 export const register = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
+  window: BrowserWindow,
   options?: RegisterOptions,
-  window?: BrowserWindow,
 ): void => {
-  // `stict` is false if not specified
-  const strictOpt = options?.strict || false
+  // `strict` is false if not specified
+  const strict = options?.strict || false
 
-  // If no window is specified, enable shortcut for all
-  // existing windows and future ones
-  const { windows, enableForNew } = window
-    ? { windows: [ window ], enableForNew: false }
-    : {
-      windows: BrowserWindow.getAllWindows(),
-      enableForNew: true
-    }
-
+  // Break down the accelerator into modifiers and non-modifiers,
+  // then, find the associated input properties
   const [modifiers, [nonModifier]] = split(accelerator)
   const inputModifiers = normalizeModifiers(modifiers).map(
     normalizedModifierToInputProperty
   )
 
+  // The modifiers check to perform when `strict` is enabled
   const modifiersCheckStrict = (i: Input): boolean => {
     const excessInputProperties = inputProperties.filter(
       p => !inputModifiers.includes(p)
@@ -121,15 +130,19 @@ export const register = <S extends string>(
       mod => !i[mod]
     )
   }
+
+  // The modifiers check to perform when `strict` is not enabled
   const modifiersCheckNonStrict = (i: Input): boolean =>
     inputModifiers.every(
       mod => i[mod]
     )
 
-  const modifiersCheck: (i: Input) => boolean = strictOpt
+  const modifiersCheck: (i: Input) => boolean = strict
     ? modifiersCheckStrict
     : modifiersCheckNonStrict
   
+  // Ignore key up events, and perform the relevant checks
+  // on key down events
   const onKeyUp = (): void => constVoid()
   const onKeyDown = (input: Input): void => {
     return input.key.toLowerCase() === nonModifier.toLowerCase() && modifiersCheck(
@@ -137,26 +150,92 @@ export const register = <S extends string>(
     ) ? f() : constVoid()
   }
 
+  // Actual handler to attach to the webContents
   const handler = (_: Event, i: Input): void =>
     i.type === 'keyUp'
       ? onKeyUp()
       : onKeyDown(i)
 
-  // Register shortcut on the given window
-  const register = (w: BrowserWindow) => w.webContents.on(
-    'before-input-event',
-    handler 
-  )
-
-  // Register shortcut for new windows if required
-  enableForNew
-    ? app.on('browser-window-created', (_, win) => {
-      register(win)
-    })
+  // If there was a previous shortcut registed with the same accelerator
+  // on the same window, override it 
+  const unregisterPreviousIfNeeded = (w: BrowserWindow) => isRegistered(accelerator, w)
+    ? unregister(accelerator, w)
     : constVoid()
 
-  // Register shortcut for existing window(s)
+  // Actual registration process
+  const register = (w: BrowserWindow): void => {
+    unregisterPreviousIfNeeded(w)
+
+    // Keep reference to local shortcut in case we need to
+    // unregister it later
+    localShortcutMap[`${accelerator}-${w.id}`] = [handler, w.webContents]
+
+    // Attach listener to webContents of the window
+    w.webContents.on(
+      'before-input-event',
+      handler 
+    )
+  }
+
+  return register(
+    window
+  )
+}
+
+// Register a shortcut for the given accelerator on all current
+// and future windows
+export const registerOnAll = <S extends string>(
+  accelerator: Accelerator<S>,
+  f: () => void,
+  options?: RegisterOptions,
+): void => {
+  const windows = BrowserWindow.getAllWindows()
+
+  // Handler to register the shortcut for new windows
+  const handler = (_: Event, w: BrowserWindow): void =>
+    register(accelerator, f, w, options)
+
+  // Register shortcut for new windows
+  app.on('browser-window-created', handler)
+
+  // Keep reference to global shortcut in case
+  // we need to unregister it later
+  globalShortcutMap[accelerator] = handler
+
   return windows.forEach(
-    register
+    win => register(accelerator, f, win, options)
+  )
+}
+
+// Unregister the given accelerator from the given
+// window
+export const unregister = <S extends string>(
+  accelerator: Accelerator<S>,
+  window: BrowserWindow,
+): void => {
+  const webContents = localShortcutMap[`${accelerator}-${window.id}`]?.[1] // Abstract this pattern
+  const handler = localShortcutMap[`${accelerator}-${window.id}`]?.[0]
+
+  webContents
+    ? webContents.removeListener("before-input-event", handler)
+    : constVoid()
+}
+
+// Unregister the given accelerator from all current
+// and future windows
+export const unregisterOnAll = <S extends string>(
+  accelerator: Accelerator<S>,
+): void => {
+  const windows = BrowserWindow.getAllWindows()
+
+  //
+  const globalHandler = globalShortcutMap[accelerator]
+  globalHandler
+    ? app.removeListener("browser-window-created", globalHandler)
+    : constVoid()
+
+  //
+  return windows.forEach(
+    win => unregister(accelerator, win)
   )
 }
