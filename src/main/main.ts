@@ -163,7 +163,6 @@ export const registerGlobal = <S extends string>(
 // Unregister the given global shortcut
 export const unregisterGlobal = <S extends string>(
   accelerator: Accelerator<S>,
-  f: () => void,
 ): void => {
   globalShortcut.unregister(accelerator)
 }
