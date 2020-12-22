@@ -1,6 +1,7 @@
-import { Accelerator, Modifier, NonModifier, NormalizedModifier, InputProperty } from "./types"
+import { Accelerator, Modifier, NonModifier, NormalizedModifier } from "./keys"
 import { BrowserWindow, Input } from "electron"
 import { constVoid } from "./utils"
+import { InputProperty, inputProperties } from "./input"
 
 // Given a valid accelerator string, split it into
 // its `Modifier`s and `NonModifier`s components
@@ -91,23 +92,46 @@ const normalizedModifierToInputProperty = (
 export const register = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
-  window: BrowserWindow
+  strict?: boolean,
+  window?: BrowserWindow,
 ): void => {
-  const win = window || window // register on all windows if not present
+  // Explain and encapsulate in object
+  const strictOpt = strict || false
+
+  // register on all windows if not present
+  const win = window || window
 
   const [modifiers, [nonModifier]] = split(accelerator)
-  const inputProperties = normalizeModifiers(modifiers).map(
+  const inputModifiers = normalizeModifiers(modifiers).map(
     normalizedModifierToInputProperty
   )
+
+  const modifiersCheckStrict = (i: Input): boolean => {
+    const excessInputProperties = inputProperties.filter(
+      p => !inputModifiers.includes(p)
+    )
+
+    return modifiersCheckNonStrict(i) && excessInputProperties.every(
+      mod => !i[mod]
+    )
+  }
+  const modifiersCheckNonStrict = (i: Input): boolean =>
+    inputModifiers.every(
+      mod => i[mod]
+    )
+
+  const modifiersCheck: (i: Input) => boolean = strictOpt
+    ? modifiersCheckStrict
+    : modifiersCheckNonStrict
   
   const onKeyUp = (): void => constVoid()
   const onKeyDown = (input: Input): void => {
-    return input.key.toLowerCase() === nonModifier.toLowerCase() && inputProperties.every(
-      p => input[p]
+    return input.key.toLowerCase() === nonModifier.toLowerCase() && modifiersCheck(
+      input
     ) ? f() : constVoid()
   }
 
-  win.webContents.on('before-input-event', (_, i) =>
+  win!.webContents.on('before-input-event', (_, i) =>
     i.type === 'keyUp'
       ? onKeyUp()
       : onKeyDown(i)

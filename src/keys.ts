@@ -20,7 +20,7 @@ export type Modifier =
   | "Shift"
   | "Super"
 
-type NormalizedModifier =
+export type NormalizedModifier =
   | "Cmd"
   | "Ctrl"
   | "AltGr"
@@ -38,12 +38,6 @@ type Punctuation = "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ":" | "
 type Misc = "Plus" | "Space" | "Tab" | "Backspace" | "Delete" | "Insert" | "Return" | "Enter" | "Up" | "Down" | "Left" | "Right" | "Home" | "End" | "PageUp" | "PageDown" | "Escape" | "Esc" | "VolumeUp" | "VolumeDown" | "VolumeMute" | "MediaNextTrack" | "MediaPreviousTrack" | "MediaStop" | "MediaPlayPause" | "PrintScreen"
 
 type Separator = "+"
-
-type InputProperty =
-  | "shift"
-  | "control"
-  | "alt"
-  | "meta"
 
 // Split a string given a separator, I.e.
 // SplitOnSeparator<"a,b,c", ","> -> ["a", "b", "c"]
