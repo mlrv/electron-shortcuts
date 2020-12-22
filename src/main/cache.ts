@@ -1,5 +1,5 @@
 import { Accelerator } from "./keys"
-import { BrowserWindow, Input, Event, WebContents } from "electron"
+import { BrowserWindow, Input, Event, WebContents, globalShortcut } from "electron"
 
 const localShortcutMap: Record<string, [
   (_: Event, i: Input) => void,
@@ -42,4 +42,10 @@ export const setGlobalShortcut = <S extends string>(
   handler: (_: Event, w: BrowserWindow) => void,
 ): void => {
   globalShortcutMap[accelerator] = handler
+}
+
+export const deleteGlobalShortcut = <S extends string>(
+  accelerator: Accelerator<S>,
+): void => {
+  delete globalShortcutMap[accelerator]
 }

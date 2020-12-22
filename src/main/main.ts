@@ -2,7 +2,7 @@ import { Accelerator, RegisterOptions } from "./keys"
 import { BrowserWindow, Input, Event, app, globalShortcut } from "electron"
 import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty } from "./utils"
 import { inputProperties } from "./input"
-import { deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
+import { deleteGlobalShortcut, deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
 
 export const isRegistered = <S extends string>(
   accelerator: Accelerator<S>,
@@ -129,7 +129,7 @@ export const unregister = <S extends string>(
     deleteLocalShortcut(accelerator, window) 
   }
 
-  webContents
+  !!webContents
     ? doUnregister()
     : constVoid()
 }
@@ -140,10 +140,15 @@ export const unregisterOnAll = <S extends string>(
   accelerator: Accelerator<S>,
 ): void => {
   const windows = BrowserWindow.getAllWindows()
-
   const globalHandler = getGlobalShortcut(accelerator)
-  globalHandler
-    ? app.removeListener("browser-window-created", globalHandler)
+
+  const doUnregister = () => {
+    app.removeListener("browser-window-created", globalHandler)
+    deleteGlobalShortcut(accelerator) 
+  }
+
+  !!globalHandler
+    ? doUnregister()
     : constVoid()
 
   return windows.forEach(
