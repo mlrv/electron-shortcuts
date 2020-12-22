@@ -1,5 +1,5 @@
 import { Accelerator, Modifier, NonModifier, NormalizedModifier, RegisterOptions } from "./keys"
-import { BrowserWindow, Input } from "electron"
+import { BrowserWindow, Input, Event, app } from "electron"
 import { constVoid } from "./utils"
 import { InputProperty, inputProperties } from "./input"
 
@@ -98,8 +98,14 @@ export const register = <S extends string>(
   // `stict` is false if not specified
   const strictOpt = options?.strict || false
 
-  // register on all windows if not present
-  const win = window || window
+  // If no window is specified, enable shortcut for all
+  // existing windows and future ones
+  const { windows, enableForNew } = window
+    ? { windows: [ window ], enableForNew: false }
+    : {
+      windows: BrowserWindow.getAllWindows(),
+      enableForNew: true
+    }
 
   const [modifiers, [nonModifier]] = split(accelerator)
   const inputModifiers = normalizeModifiers(modifiers).map(
@@ -131,12 +137,26 @@ export const register = <S extends string>(
     ) ? f() : constVoid()
   }
 
-  win!.webContents.on('before-input-event', (_, i) =>
+  const handler = (_: Event, i: Input): void =>
     i.type === 'keyUp'
       ? onKeyUp()
       : onKeyDown(i)
+
+  // Register shortcut on the given window
+  const register = (w: BrowserWindow) => w.webContents.on(
+    'before-input-event',
+    handler 
+  )
+
+  // Register shortcut for new windows if required
+  enableForNew
+    ? app.on('browser-window-created', (_, win) => {
+      register(win)
+    })
+    : constVoid()
+
+  // Register shortcut for existing window(s)
+  return windows.forEach(
+    register
   )
 }
-
-// register('Cmd+Shift+a', () => {}, null as any)
-// register('Cmd+Ops', () => {})
