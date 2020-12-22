@@ -94,3 +94,8 @@ export type Accelerator<S extends string> =
   IsValidCombination<Separate<SplitOnPlus<S>>> extends true
     ? S
     : never
+
+// Available options for registering a shortcut
+export type RegisterOptions = {
+  strict?: boolean
+}

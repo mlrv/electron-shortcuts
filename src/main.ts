@@ -1,4 +1,4 @@
-import { Accelerator, Modifier, NonModifier, NormalizedModifier } from "./keys"
+import { Accelerator, Modifier, NonModifier, NormalizedModifier, RegisterOptions } from "./keys"
 import { BrowserWindow, Input } from "electron"
 import { constVoid } from "./utils"
 import { InputProperty, inputProperties } from "./input"
@@ -92,11 +92,11 @@ const normalizedModifierToInputProperty = (
 export const register = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
-  strict?: boolean,
+  options?: RegisterOptions,
   window?: BrowserWindow,
 ): void => {
-  // Explain and encapsulate in object
-  const strictOpt = strict || false
+  // `stict` is false if not specified
+  const strictOpt = options?.strict || false
 
   // register on all windows if not present
   const win = window || window
