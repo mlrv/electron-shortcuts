@@ -1,5 +1,5 @@
 import { Accelerator, RegisterOptions } from "./keys"
-import { BrowserWindow, Input, Event, app } from "electron"
+import { BrowserWindow, Input, Event, app, globalShortcut } from "electron"
 import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty } from "./utils"
 import { inputProperties } from "./input"
 import { deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
@@ -7,12 +7,12 @@ import { deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShor
 export const isRegistered = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
-): boolean => { // return something else? Maybe the windows?
+): boolean => {
   return !!getLocalShortcut(accelerator, window)
 }
 
-// Register a shortcut for the given accelerator string
-// on the given window
+// Register a local shortcut for the given
+// accelerator string on the given window
 export const register = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
@@ -91,8 +91,8 @@ export const register = <S extends string>(
   )
 }
 
-// Register a shortcut for the given accelerator on all current
-// and future windows
+// Register a local shortcut for the given
+// accelerator on all current and future windows
 export const registerOnAll = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
@@ -116,8 +116,7 @@ export const registerOnAll = <S extends string>(
   )
 }
 
-// Unregister the given accelerator from the given
-// window
+// Unregister the given shortcut from the given window
 export const unregister = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
@@ -135,21 +134,36 @@ export const unregister = <S extends string>(
     : constVoid()
 }
 
-// Unregister the given accelerator from all current
+// Unregister the given shortcut from all current
 // and future windows
 export const unregisterOnAll = <S extends string>(
   accelerator: Accelerator<S>,
 ): void => {
   const windows = BrowserWindow.getAllWindows()
 
-  //
   const globalHandler = getGlobalShortcut(accelerator)
   globalHandler
     ? app.removeListener("browser-window-created", globalHandler)
     : constVoid()
 
-  //
   return windows.forEach(
     win => unregister(accelerator, win)
   )
+}
+
+// Register a global shortcut for the given
+// accelerator string on the given window
+export const registerGlobal = <S extends string>(
+  accelerator: Accelerator<S>,
+  f: () => void,
+): void => {
+  globalShortcut.register(accelerator, f)
+}
+
+// Unregister the given global shortcut
+export const unregisterGlobal = <S extends string>(
+  accelerator: Accelerator<S>,
+  f: () => void,
+): void => {
+  globalShortcut.unregister(accelerator)
 }
