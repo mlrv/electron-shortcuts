@@ -11,5 +11,6 @@
     "noFallthroughCasesInSwitch": true, 
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "downlevelIteration": true
   }
 }
