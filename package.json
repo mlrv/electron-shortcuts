@@ -1,11 +1,13 @@
 {
   "name": "type-safe-shortcuts",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Type Safe Electron Shortcuts",
+  "main": "src/main/main.js",
   "scripts": {
     "build": "tsc",
-    "test": "jest --config jestconfig.json"
+    "test": "jest --config jestconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test"
   },
   "files": [
     "src/**/*"
