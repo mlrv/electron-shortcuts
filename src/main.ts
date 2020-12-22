@@ -2,6 +2,7 @@ import { Accelerator, Modifier, NonModifier, NormalizedModifier, RegisterOptions
 import { BrowserWindow, Input, Event, app, WebContents } from "electron"
 import { constVoid } from "./utils"
 import { InputProperty, inputProperties } from "./input"
+import { getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
 
 // Given a valid accelerator string, split it into
 // its `Modifier`s and `NonModifier`s components
@@ -88,18 +89,11 @@ const normalizedModifierToInputProperty = (
   }
 }
 
-const localShortcutMap: Record<string, [ // lifecycle?
-  (_: Event, i: Input) => void,
-  WebContents,
-]> = {}
-
-const globalShortcutMap: Record<string, (_: Event, w: BrowserWindow) => void> = {}
-
 export const isRegistered = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
 ): boolean => { // return something else? Maybe the windows?
-  return !!localShortcutMap[`${accelerator}-${window.id}`]
+  return !!getLocalShortcut(accelerator, window)
 }
 
 // Register a shortcut for the given accelerator string
@@ -168,7 +162,7 @@ export const register = <S extends string>(
 
     // Keep reference to local shortcut in case we need to
     // unregister it later
-    localShortcutMap[`${accelerator}-${w.id}`] = [handler, w.webContents]
+    setLocalShortcut(accelerator, w, handler)
 
     // Attach listener to webContents of the window
     w.webContents.on(
@@ -200,7 +194,7 @@ export const registerOnAll = <S extends string>(
 
   // Keep reference to global shortcut in case
   // we need to unregister it later
-  globalShortcutMap[accelerator] = handler
+  setGlobalShortcut(accelerator, handler)
 
   return windows.forEach(
     win => register(accelerator, f, win, options)
@@ -213,8 +207,8 @@ export const unregister = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
 ): void => {
-  const webContents = localShortcutMap[`${accelerator}-${window.id}`]?.[1] // Abstract this pattern
-  const handler = localShortcutMap[`${accelerator}-${window.id}`]?.[0]
+  const handler = getLocalShortcut(accelerator, window)?.[0]
+  const webContents = getLocalShortcut(accelerator, window)?.[1]
 
   webContents
     ? webContents.removeListener("before-input-event", handler)
@@ -229,7 +223,7 @@ export const unregisterOnAll = <S extends string>(
   const windows = BrowserWindow.getAllWindows()
 
   //
-  const globalHandler = globalShortcutMap[accelerator]
+  const globalHandler = getGlobalShortcut(accelerator)
   globalHandler
     ? app.removeListener("browser-window-created", globalHandler)
     : constVoid()
