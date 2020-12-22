@@ -1,5 +1,5 @@
 import { Accelerator } from "./keys"
-import { BrowserWindow, Input, Event, WebContents, globalShortcut } from "electron"
+import { BrowserWindow, Input, Event, WebContents } from "electron"
 
 const localShortcutMap: Record<string, [
   (_: Event, i: Input) => void,

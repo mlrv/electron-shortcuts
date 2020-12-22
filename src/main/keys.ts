@@ -5,7 +5,7 @@ type KeyCodes =
   | Digit
   | FunctionKey
   | Punctuation
-  | Misc // name??
+  | Misc
 
 export type Modifier =
   | "Command"
