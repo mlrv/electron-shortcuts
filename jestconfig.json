@@ -10,5 +10,6 @@
     "jsx",
     "json",
     "node"
-  ]
+  ],
+  "testTimeout": 60000
 }

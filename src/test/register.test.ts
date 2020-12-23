@@ -1,25 +1,25 @@
 import { Application } from "spectron"
 import * as path from "path"
 
-const electronPath = require('electron')
-const ks = require('node-keys-simulator')
+const electronPath = require("electron")
+const ks = require("node-keys-simulator")
 
 describe("main", () => {
 
   let app: Application
 
-  beforeEach(
+  beforeAll(
     async () => {
       app = new Application({
         path: electronPath,
-        args: [path.join(__dirname, '../../dist/examples/register/register.js')]
+        args: [path.join(__dirname, "../../dist/examples/register/register.js")]
       })
 
       return await app.start()
     }
   )
 
-  afterEach(
+  afterAll(
     async () => {
       if (app && app.isRunning()) {
         return await app.client.execute(
@@ -33,18 +33,56 @@ describe("main", () => {
 
   it("should start the example app", async () => {
     const winCount = await app.client.getWindowCount()
+
     expect(winCount).toEqual(1)
-  })
+  }, 10000)
 
-  it("should execute a registed shortcut", async () => {
-    const title1 = await app.client.getTitle()
+  it("should execute a registed shortcut with one modifier", async () => {
+    await ks.sendCombination(["shift", "a"]);
 
-    await ks.sendCombination(['shift', 'x']);
+    const title = await app.client.getTitle()
 
-    const title2 = await app.client.getTitle()
+    expect(title).toEqual("register_1")
+  }, 10000)
 
-    expect(title1).toEqual("Start")
-    expect(title2).toEqual("Register")
-  })
+  it("should execute a registed shortcut with two modifiers", async () => {
+    await ks.sendCombination(["meta", "shift", "a"]);
+
+    const title = await app.client.getTitle()
+
+    expect(title).toEqual("register_2")
+  }, 10000)
+
+  it("should execute a registed shortcut with three modifiers", async () => {
+    await ks.sendCombination(["meta", "shift", "control", "a"]);
+
+    const title = await app.client.getTitle()
+
+    expect(title).toEqual("register_3")
+  }, 10000)
+
+  it("should execute a registed strict shortcut", async () => {
+    await ks.sendCombination(["shift", "b"]);
+
+    const title = await app.client.getTitle()
+
+    expect(title).toEqual("register_4")
+  }, 10000)
+
+  it("should not execute a registed strict shortcut if extra keys are pressed", async () => {
+    await ks.sendCombination(["shift", "alt", "b"]);
+
+    const title = await app.client.getTitle()
+
+    expect(title).toEqual("register_4")
+  }, 10000)
+
+  it("should override shortcuts", async () => {
+    await ks.sendCombination(["meta", ";"]);
+
+    const title = await app.client.getTitle()
+
+    expect(title).toEqual("register_4")
+  }, 10000)
 
 })
