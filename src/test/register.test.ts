@@ -4,7 +4,7 @@ import * as path from "path"
 const electronPath = require("electron")
 const ks = require("node-keys-simulator")
 
-describe("main", () => {
+describe("register", () => {
 
   let app: Application
 
