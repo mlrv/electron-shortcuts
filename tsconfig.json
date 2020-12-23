@@ -16,6 +16,6 @@
   },
   "include": [
     "src/main",
-    "example"
+    "examples"
   ]
 }

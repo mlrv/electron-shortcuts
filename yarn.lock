@@ -3371,6 +3371,11 @@ node-int64@^0.4.0:
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=
 
+node-keys-simulator@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/node-keys-simulator/-/node-keys-simulator-1.0.0.tgz#c338954c3bc3487b9408aa936c5acc433702578c"
+  integrity sha512-ESRKmIh6ePNYJKSlrn43dW/ugc8vgoMrAiJrbkCyWOsGD84Xu7Qk8S6haabfjKSNJXslS8AGPKjQOB46q/TVlg==
+
 node-modules-regexp@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/node-modules-regexp/-/node-modules-regexp-1.0.0.tgz#8d9dbe28964a4ac5712e9131642107c71e90ec40"
