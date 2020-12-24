@@ -1,5 +1,5 @@
 {
-  "name": "type-safe-shortcuts",
+  "name": "electron-shortcuts",
   "version": "0.0.1",
   "description": "Type Safe Electron Shortcuts",
   "main": "./dist/src/main/main.js",
