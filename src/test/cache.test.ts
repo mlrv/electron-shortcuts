@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron"
-import { getShortcutLocal, setShortcutLocal, deleteShortcutLocal, getShortcutGlobal, setShortcutGlobal, deleteShortcutGlobal, setShortcutOnAll, getShortcutOnAll, deleteShortcutOnAll  } from "../main/cache"
+import { getShortcutLocal, setShortcutLocal, deleteShortcutLocal, getShortcutGlobal, setShortcutGlobal, deleteShortcutGlobal, setShortcutOnAll, getShortcutOnAll, deleteShortcutOnAll } from "../main/cache"
 import { constVoid } from "../main/utils"
 
 const window = (id: number): BrowserWindow => ({
@@ -108,7 +108,7 @@ describe("cache", () => {
       deleteShortcutOnAll(accelerator)
 
       expect(
-        getShortcutGlobal(
+        getShortcutOnAll(
           accelerator
         )
       ).toBeUndefined()
@@ -125,6 +125,61 @@ describe("cache", () => {
 
       expect(
         getShortcutOnAll(
+          accelerator
+        )
+      ).toEqual(handler2)
+    })
+
+  })
+
+  describe("global shortcuts", () => {
+
+    it("should return undefined for an unset global shortcut", () => {
+      expect(
+        getShortcutGlobal(
+          "Cmd+a"
+        )
+      ).toBeUndefined()
+    })
+
+    it("should return the correct value for a set global shortcut", () => {
+      const accelerator = "Cmd+a"
+      const handler = constVoid
+
+      setShortcutGlobal(accelerator, handler)
+
+      expect(
+        getShortcutGlobal(
+          accelerator
+        )
+      ).toEqual(handler)
+    })
+
+    it("should return undefined for a set and deleted global shortcut", () => {
+      const accelerator = "Cmd+a"
+      const handler = constVoid
+
+      setShortcutGlobal(accelerator, handler)
+      deleteShortcutGlobal(accelerator)
+
+      expect(
+        getShortcutGlobal(
+          accelerator
+        )
+      ).toBeUndefined()
+    })
+
+    it("should return the most up to date value", () => {
+      const accelerator = "Cmd+a"
+
+      const handler1 = constVoid
+      const handler2 = (_: any, b: any) => b
+
+      setShortcutGlobal(accelerator, handler1)
+      setShortcutGlobal(accelerator, handler2)
+
+      expect(
+        getShortcutGlobal(
           accelerator
         )
       ).toEqual(handler2)
