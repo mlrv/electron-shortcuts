@@ -1,6 +1,6 @@
 import { BrowserWindow } from "electron"
-import { getShortcutLocal, setShortcutLocal, deleteShortcutLocal, getShortcutGlobal, setShortcutGlobal, deleteShortcutGlobal, setShortcutOnAll, getShortcutOnAll, deleteShortcutOnAll } from "../main/cache"
-import { constVoid } from "../main/utils"
+import { getShortcutLocal, setShortcutLocal, deleteShortcutLocal, getShortcutGlobal, setShortcutGlobal, deleteShortcutGlobal, setShortcutOnAll, getShortcutOnAll, deleteShortcutOnAll } from "../../main/cache"
+import { constVoid } from "../../main/utils"
 
 const window = (id: number): BrowserWindow => ({
   id,

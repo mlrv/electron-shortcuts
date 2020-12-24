@@ -6,7 +6,8 @@
   "types": "./dist/src/main/main.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && jest --config jestconfig.json",
+    "test:unit": "npm run build && jest --config jestconfig.json ./src/test/unit",
+    "test:e2e": "npm run build && jest --config jestconfig.json ./src/test/e2e",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test"
   },

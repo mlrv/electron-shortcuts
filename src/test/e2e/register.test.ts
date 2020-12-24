@@ -12,7 +12,7 @@ describe("register", () => {
     async () => {
       app = new Application({
         path: electronPath,
-        args: [path.join(__dirname, "../../dist/e2e/register/register.js")]
+        args: [path.join(__dirname, "../../../dist/e2e/register/register.js")]
       })
 
       return await app.start()

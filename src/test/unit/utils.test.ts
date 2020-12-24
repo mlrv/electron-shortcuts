@@ -1,5 +1,5 @@
-import { Modifier } from "../main/keys"
-import { split, normalizeModifiers, normalizedModifierToInputProperty, isModifier, normalizeModifier } from "../main/utils"
+import { Modifier } from "../../main/keys"
+import { split, normalizeModifiers, normalizedModifierToInputProperty, isModifier, normalizeModifier } from "../../main/utils"
 
 describe("utils", () => {
 
