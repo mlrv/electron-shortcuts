@@ -43,7 +43,7 @@ describe("utils", () => {
     })
 
     it("should normalize modifiers", () => {
-      expect(normalizeModifiers(["Cmd", "Shift", "Command", "Super", "Control" ])).toEqual(["Cmd", "Shift", "Super", "Alt", "Ctrl" ])
+      expect(normalizeModifiers(["Cmd", "Shift", "Command", "Super", "Control" ])).toEqual(["Cmd", "Shift", "Super", "Ctrl" ])
     })
 
   })
@@ -96,8 +96,11 @@ describe("utils", () => {
     it("should normalize Cmd-like Modifiers", () => {
       expect(normalizeModifier("Cmd")).toEqual("Cmd")
       expect(normalizeModifier("Command")).toEqual("Cmd")
-      expect(normalizeModifier("CmdOrCtrl")).toEqual("Cmd")
-      expect(normalizeModifier("CommandOrControl")).toEqual("Cmd")
+    })
+
+    it("should normalize CmdOrCtrl-like Modifiers", () => {
+      expect(normalizeModifier("CmdOrCtrl")).toEqual("CmdOrCtrl")
+      expect(normalizeModifier("CommandOrControl")).toEqual("CmdOrCtrl")
     })
 
     it("should normalize Ctrl-like Modifiers", () => {

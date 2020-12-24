@@ -24,6 +24,7 @@ export type Modifier =
 export type NormalizedModifier =
   | "Cmd"
   | "Ctrl"
+  | "CmdOrCtrl"
   | "AltGr"
   | "Alt"
   | "Shift"

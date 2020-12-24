@@ -42,6 +42,11 @@ export const normalizedModifierToInputProperty = (
       return "shift"
     case "Alt":
       return "alt"
+    case "CmdOrCtrl":
+      // https://github.com/electron/electron/blob/master/docs/api/accelerator.md#platform-notice
+      return process.platform === "darwin"
+        ? "meta"
+        : "control"
   }
 }
 
@@ -70,9 +75,11 @@ export const normalizeModifier = (
   switch (modifier) {
     case "Cmd":
     case "Command":
+      return "Cmd"
+
     case "CmdOrCtrl":
     case "CommandOrControl":
-      return "Cmd"
+      return "CmdOrCtrl"
 
     case "Control":
     case "Ctrl":
