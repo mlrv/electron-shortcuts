@@ -7,6 +7,8 @@ type KeyCodes =
   | Punctuation
   | Misc
 
+// Note that `Option` is left out on purpose to avoid cross-platform issues,
+// see https://github.com/electron/electron/blob/master/docs/api/accelerator.md#platform-notice
 export type Modifier =
   | "Command"
   | "Cmd"
@@ -15,7 +17,6 @@ export type Modifier =
   | "CommandOrControl"
   | "CmdOrCtrl"
   | "Alt"
-  | "Option"
   | "AltGr"
   | "Shift"
   | "Super"

@@ -58,7 +58,6 @@ export const isModifier = (
   "CommandOrControl",
   "CmdOrCtrl",
   "Alt",
-  "Option",
   "AltGr",
   "Shift",
   "Super"
@@ -74,10 +73,6 @@ export const normalizeModifier = (
     case "CmdOrCtrl":
     case "CommandOrControl":
       return "Cmd"
-
-    case "Alt":
-    case "Option":
-      return "Alt"
 
     case "Control":
     case "Ctrl":
