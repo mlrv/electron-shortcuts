@@ -12,7 +12,7 @@ describe("isRegisteredGlobal", () => {
     async () => {
       app = new Application({
         path: electronPath,
-        args: [path.join(__dirname, "../../dist/examples/isRegisteredGlobal/isRegisteredGlobal.js")]
+        args: [path.join(__dirname, "../../dist/e2e/isRegisteredGlobal/isRegisteredGlobal.js")]
       })
 
       return await app.start()

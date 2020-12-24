@@ -12,7 +12,7 @@ describe("isRegisteredOnAll", () => {
     async () => {
       app = new Application({
         path: electronPath,
-        args: [path.join(__dirname, "../../dist/examples/isRegisteredOnAll/isRegisteredOnAll.js")]
+        args: [path.join(__dirname, "../../dist/e2e/isRegisteredOnAll/isRegisteredOnAll.js")]
       })
 
       return await app.start()
