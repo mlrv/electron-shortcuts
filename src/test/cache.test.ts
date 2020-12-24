@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron"
-import { getLocalShortcut, setLocalShortcut, deleteGlobalShortcut, getGlobalShortcut, setGlobalShortcut, deleteLocalShortcut } from "../main/cache"
+import { getShortcutLocal, setShortcutLocal, deleteShortcutLocal, getShortcutGlobal, setShortcutGlobal, deleteShortcutGlobal, setShortcutOnAll, getShortcutOnAll, deleteShortcutOnAll  } from "../main/cache"
 import { constVoid } from "../main/utils"
 
 const window = (id: number): BrowserWindow => ({
@@ -13,7 +13,7 @@ describe("cache", () => {
 
     it("should return undefined for an unset local shortcut", () => {
       expect(
-        getLocalShortcut(
+        getShortcutLocal(
           "Cmd+a",
           window(Math.random())
         )
@@ -25,10 +25,10 @@ describe("cache", () => {
       const win = window(Math.random())
       const handler = constVoid
 
-      setLocalShortcut(accelerator, win, handler)
+      setShortcutLocal(accelerator, win, handler)
 
       expect(
-        getLocalShortcut(
+        getShortcutLocal(
           accelerator,
           win
         )
@@ -43,11 +43,11 @@ describe("cache", () => {
       const win = window(Math.random())
       const handler = constVoid
 
-      setLocalShortcut(accelerator, win, handler)
-      deleteLocalShortcut(accelerator, win)
+      setShortcutLocal(accelerator, win, handler)
+      deleteShortcutLocal(accelerator, win)
 
       expect(
-        getLocalShortcut(
+        getShortcutLocal(
           accelerator,
           win
         )
@@ -61,11 +61,11 @@ describe("cache", () => {
       const handler1 = constVoid
       const handler2 = (_: any, b: any) => b
 
-      setLocalShortcut(accelerator, win, handler1)
-      setLocalShortcut(accelerator, win, handler2)
+      setShortcutLocal(accelerator, win, handler1)
+      setShortcutLocal(accelerator, win, handler2)
 
       expect(
-        getLocalShortcut(
+        getShortcutLocal(
           accelerator,
           win
         )
@@ -77,38 +77,38 @@ describe("cache", () => {
 
   })
 
-  describe("global shortcuts", () => {
+  describe("shortcuts on all", () => {
 
-    it("should return undefined for an unset global shortcut", () => {
+    it("should return undefined for an unset shortcut on all pages", () => {
       expect(
-        getGlobalShortcut(
+        getShortcutGlobal(
           "Cmd+a"
         )
       ).toBeUndefined()
     })
 
-    it("should return the correct value for a set global shortcut", () => {
+    it("should return the correct value for a shortcut set on all pages", () => {
       const accelerator = "Cmd+a"
       const handler = constVoid
 
-      setGlobalShortcut(accelerator, handler)
+      setShortcutOnAll(accelerator, handler)
 
       expect(
-        getGlobalShortcut(
+        getShortcutOnAll(
           accelerator
         )
       ).toEqual(handler)
     })
 
-    it("should return undefined for a set and deleted global shortcut", () => {
+    it("should return undefined for a set and deleted shortcut on all pages", () => {
       const accelerator = "Cmd+a"
       const handler = constVoid
 
-      setGlobalShortcut(accelerator, handler)
-      deleteGlobalShortcut(accelerator)
+      setShortcutOnAll(accelerator, handler)
+      deleteShortcutOnAll(accelerator)
 
       expect(
-        getGlobalShortcut(
+        getShortcutGlobal(
           accelerator
         )
       ).toBeUndefined()
@@ -120,11 +120,11 @@ describe("cache", () => {
       const handler1 = constVoid
       const handler2 = (_: any, b: any) => b
 
-      setGlobalShortcut(accelerator, handler1)
-      setGlobalShortcut(accelerator, handler2)
+      setShortcutOnAll(accelerator, handler1)
+      setShortcutOnAll(accelerator, handler2)
 
       expect(
-        getGlobalShortcut(
+        getShortcutOnAll(
           accelerator
         )
       ).toEqual(handler2)
