@@ -1,6 +1,6 @@
 {
   "name": "electron-shortcuts",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Type Safe Electron Shortcuts",
   "main": "./dist/src/main/main.js",
   "types": "./dist/src/main/main.d.ts",
