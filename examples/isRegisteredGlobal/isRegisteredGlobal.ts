@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron"
-import { isRegisteredGlobal, register, registerGlobal, registerOnAll, unregister, unregisterGlobal } from "../../src/main/main"
+import { isRegisteredGlobal, register, registerGlobal, unregisterGlobal } from "../../src/main/main"
 import * as path from "path"
 
 function createWindow() {
