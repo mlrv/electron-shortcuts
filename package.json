@@ -2,8 +2,8 @@
   "name": "type-safe-shortcuts",
   "version": "0.0.1",
   "description": "Type Safe Electron Shortcuts",
-  "main": "./dist/main/main.js",
-  "types": "./dist/main/main.d.ts",
+  "main": "./dist/src/main/main.js",
+  "types": "./dist/src/main/main.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "npm run build && jest --config jestconfig.json",
@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run test"
   },
   "files": [
-    "/dist/main"
+    "/dist/src/main"
   ],
   "author": "mlrv",
   "license": "ISC",

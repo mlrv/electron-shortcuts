@@ -2,13 +2,25 @@ import { Accelerator, RegisterOptions } from "./keys"
 import { BrowserWindow, Input, Event, app, globalShortcut } from "electron"
 import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty } from "./utils"
 import { inputProperties } from "./input"
-import { deleteGlobalShortcut, deleteLocalShortcut, getGlobalShortcut, getLocalShortcut, setGlobalShortcut, setLocalShortcut } from "./cache"
+import { deleteShortcutLocal, deleteShortcutOnAll, deleteShortcutGlobal, getShortcutLocal, getShortcutOnAll, getShortcutGlobal, setShortcutLocal, setShortcutOnAll, setShortcutGlobal } from "./cache"
 
-export const isRegistered = <S extends string>(
+export const isRegisteredLocal = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
 ): boolean => {
-  return !!getLocalShortcut(accelerator, window)
+  return !!getShortcutLocal(accelerator, window)
+}
+
+export const isRegisteredOnAll = <S extends string>(
+  accelerator: Accelerator<S>,
+): boolean => {
+  return !!getShortcutOnAll(accelerator)
+}
+
+export const isRegisteredGlobal = <S extends string>(
+  accelerator: Accelerator<S>,
+): boolean => {
+  return !!getShortcutGlobal(accelerator)
 }
 
 // Register a local shortcut for the given
@@ -67,7 +79,7 @@ export const register = <S extends string>(
 
   // If there was a previous shortcut registed with the same accelerator
   // on the same window, override it 
-  const unregisterPreviousIfNeeded = (w: BrowserWindow) => isRegistered(accelerator, w)
+  const unregisterPreviousIfNeeded = (w: BrowserWindow) => isRegisteredLocal(accelerator, w)
     ? unregister(accelerator, w)
     : constVoid()
 
@@ -77,7 +89,7 @@ export const register = <S extends string>(
 
     // Keep reference to local shortcut in case we need to
     // unregister it later
-    setLocalShortcut(accelerator, w, handler)
+    setShortcutLocal(accelerator, w, handler)
 
     // Attach listener to webContents of the window
     w.webContents.on(
@@ -109,7 +121,7 @@ export const registerOnAll = <S extends string>(
 
   // Keep reference to global shortcut in case
   // we need to unregister it later
-  setGlobalShortcut(accelerator, handler)
+  setShortcutOnAll(accelerator, handler)
 
   return windows.forEach(
     win => register(accelerator, f, win, options)
@@ -121,12 +133,12 @@ export const unregister = <S extends string>(
   accelerator: Accelerator<S>,
   window: BrowserWindow,
 ): void => {
-  const handler = getLocalShortcut(accelerator, window)?.[0]
-  const webContents = getLocalShortcut(accelerator, window)?.[1]
+  const handler = getShortcutLocal(accelerator, window)?.[0]
+  const webContents = getShortcutLocal(accelerator, window)?.[1]
 
   const doUnregister = () => {
     webContents.removeListener("before-input-event", handler)
-    deleteLocalShortcut(accelerator, window) 
+    deleteShortcutLocal(accelerator, window) 
   }
 
   !!webContents
@@ -140,11 +152,11 @@ export const unregisterOnAll = <S extends string>(
   accelerator: Accelerator<S>,
 ): void => {
   const windows = BrowserWindow.getAllWindows()
-  const globalHandler = getGlobalShortcut(accelerator)
+  const globalHandler = getShortcutOnAll(accelerator)
 
   const doUnregister = () => {
     app.removeListener("browser-window-created", globalHandler)
-    deleteGlobalShortcut(accelerator) 
+    deleteShortcutOnAll(accelerator) 
   }
 
   !!globalHandler
@@ -162,12 +174,30 @@ export const registerGlobal = <S extends string>(
   accelerator: Accelerator<S>,
   f: () => void,
 ): void => {
-  globalShortcut.register(accelerator, f)
+  // If there was a previous global shortcut registed with the same
+  // accelerator, override it 
+  const unregisterPreviousIfNeeded = () => isRegisteredGlobal(accelerator)
+    ? unregisterGlobal(accelerator)
+    : constVoid()
+
+  const doRegisterGlobal = () => {
+    unregisterPreviousIfNeeded()
+    setShortcutGlobal(accelerator, f)
+    globalShortcut.register(accelerator, f)
+  }
+
+  return doRegisterGlobal()
 }
 
 // Unregister the given global shortcut
 export const unregisterGlobal = <S extends string>(
   accelerator: Accelerator<S>,
 ): void => {
-  globalShortcut.unregister(accelerator)
+
+  const doUnregister = () => {
+    deleteShortcutGlobal(accelerator) 
+    globalShortcut.unregister(accelerator)
+  }
+
+  return doUnregister()
 }
