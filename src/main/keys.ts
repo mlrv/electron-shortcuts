@@ -46,7 +46,7 @@ type Digit = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0"
 type FunctionKey = "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24"
 type Punctuation = "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ":" | "<" | "_" | ">" | "?" | "~" | "{" | "|" | "}" | "\""| ";" | "=" | "," | "\\" | "-" | "." | "/" | "\`" | "[" |"]" | "\'"
 type Misc = "Plus" | "Space" | "Tab" | "Backspace" | "Delete" | "Insert" | "Return" | "Enter" | "Up" | "Down" | "Left" | "Right" | "Home" | "End" | "PageUp" | "PageDown" | "Escape" | "Esc" | "VolumeUp" | "VolumeDown" | "VolumeMute" | "MediaNextTrack" | "MediaPreviousTrack" | "MediaStop" | "MediaPlayPause" | "PrintScreen"
-type NormalizedMisc = Exclude<Misc, "Return" | "Esc">
+type NormalizedMisc = Exclude<Misc, "Return" | "Esc"> | "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight"
 
 type Separator = "+"
 

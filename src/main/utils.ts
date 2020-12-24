@@ -101,6 +101,15 @@ export const normalizeNonModifier = (
     case "Esc":
       return "Escape"
 
+    case "Up":
+      return "ArrowUp"
+    case "Down":
+      return "ArrowDown"
+    case "Left":
+      return "ArrowLeft"
+    case "Right":
+      return "ArrowRight"
+
     default:
       return nonMod
   }

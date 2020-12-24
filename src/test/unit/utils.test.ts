@@ -127,6 +127,13 @@ describe("utils", () => {
       expect(normalizeNonModifier("Esc")).toEqual("Escape")
     })
 
+    it("should normalize Arrow keys", () => {
+      expect(normalizeNonModifier("Up")).toEqual("ArrowUp")
+      expect(normalizeNonModifier("Down")).toEqual("ArrowDown")
+      expect(normalizeNonModifier("Left")).toEqual("ArrowLeft")
+      expect(normalizeNonModifier("Right")).toEqual("ArrowRight")
+    })
+
     it("should keep everything else untouched", () => {
       [
         "a",

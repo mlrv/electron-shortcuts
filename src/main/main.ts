@@ -1,6 +1,6 @@
 import { Accelerator, RegisterOptions } from "./keys"
 import { BrowserWindow, Input, Event, app, globalShortcut } from "electron"
-import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty } from "./utils"
+import { constVoid, split, normalizeModifiers, normalizedModifierToInputProperty, normalizeNonModifier } from "./utils"
 import { inputProperties } from "./input"
 import { deleteShortcutLocal, deleteShortcutOnAll, deleteShortcutGlobal, getShortcutLocal, getShortcutOnAll, getShortcutGlobal, setShortcutLocal, setShortcutOnAll, setShortcutGlobal } from "./cache"
 
@@ -37,9 +37,11 @@ export const register = <S extends string>(
   // Break down the accelerator into modifiers and non-modifiers,
   // then, find the associated input properties
   const [modifiers, [nonModifier]] = split(accelerator)
+
   const inputModifiers = normalizeModifiers(modifiers).map(
     normalizedModifierToInputProperty
   )
+  const normalizedNonModifier = normalizeNonModifier(nonModifier)
 
   // The modifiers check to perform when `strict` is enabled
   const modifiersCheckStrict = (i: Input): boolean => {
@@ -66,7 +68,7 @@ export const register = <S extends string>(
   // on key down events
   const onKeyUp = (): void => constVoid()
   const onKeyDown = (input: Input): void => {
-    return input.key.toLowerCase() === nonModifier.toLowerCase() && modifiersCheck(
+    return input.key.toLowerCase() === normalizedNonModifier.toLowerCase() && modifiersCheck(
       input
     ) ? f() : constVoid()
   }
