@@ -32,12 +32,21 @@ export type NormalizedModifier =
 
 export type NonModifier = Exclude<KeyCodes, Modifier> 
 
+export type NormalizedNonModifier =
+  | LowerAlpha
+  | UpperAlpha
+  | Digit
+  | FunctionKey
+  | Punctuation
+  | NormalizedMisc
+
 type LowerAlpha = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 type UpperAlpha = `${Uppercase<LowerAlpha>}`
 type Digit = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0"
 type FunctionKey = "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24"
 type Punctuation = "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ":" | "<" | "_" | ">" | "?" | "~" | "{" | "|" | "}" | "\""| ";" | "=" | "," | "\\" | "-" | "." | "/" | "\`" | "[" |"]" | "\'"
 type Misc = "Plus" | "Space" | "Tab" | "Backspace" | "Delete" | "Insert" | "Return" | "Enter" | "Up" | "Down" | "Left" | "Right" | "Home" | "End" | "PageUp" | "PageDown" | "Escape" | "Esc" | "VolumeUp" | "VolumeDown" | "VolumeMute" | "MediaNextTrack" | "MediaPreviousTrack" | "MediaStop" | "MediaPlayPause" | "PrintScreen"
+type NormalizedMisc = Exclude<Misc, "Return" | "Esc">
 
 type Separator = "+"
 

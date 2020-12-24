@@ -1,4 +1,4 @@
-import { Accelerator, Modifier, NonModifier, NormalizedModifier } from "./keys"
+import { Accelerator, Modifier, NonModifier, NormalizedModifier, NormalizedNonModifier } from "./keys"
 import { InputProperty } from "./input"
 
 // Given a valid accelerator string, split it into
@@ -87,5 +87,21 @@ export const normalizeModifier = (
 
     default:
       return modifier
+  }
+}
+
+// Normalize a `NonModifier` key to a common subset
+export const normalizeNonModifier = (
+  nonMod: NonModifier,
+): NormalizedNonModifier => {
+  switch (nonMod) {
+    case "Return":
+      return "Enter"
+    
+    case "Esc":
+      return "Escape"
+
+    default:
+      return nonMod
   }
 }

@@ -1,29 +1,29 @@
-import { Modifier } from "../../main/keys"
-import { split, normalizeModifiers, normalizedModifierToInputProperty, isModifier, normalizeModifier } from "../../main/utils"
+import { Modifier, NonModifier } from "../../main/keys"
+import { split, normalizeModifiers, normalizedModifierToInputProperty, isModifier, normalizeModifier, normalizeNonModifier } from "../../main/utils"
 
 describe("utils", () => {
 
   describe("split", () => {
 
-   it("should split a valid accelerator into Modifiers and NonModifiers", () => {
-    expect(split("Cmd+Shift+a")).toEqual([["Cmd", "Shift"], ["a"]])
-   }) 
+    it("should split a valid accelerator into Modifiers and NonModifiers", () => {
+      expect(split("Cmd+Shift+a")).toEqual([["Cmd", "Shift"], ["a"]])
+    })
 
-   it("should work with a single Modifier", () => {
-    expect(split("Cmd+a")).toEqual([["Cmd"], ["a"]])
-   }) 
+    it("should work with a single Modifier", () => {
+      expect(split("Cmd+a")).toEqual([["Cmd"], ["a"]])
+    })
 
-   it("should work with multiple Modifiers", () => {
-    expect(split("Cmd+Shift+Alt+a")).toEqual([["Cmd", "Shift", "Alt"], ["a"]])
-   }) 
+    it("should work with multiple Modifiers", () => {
+      expect(split("Cmd+Shift+Alt+a")).toEqual([["Cmd", "Shift", "Alt"], ["a"]])
+    })
 
-   it("should work with non-normalized Modifiers", () => {
-    expect(split("Cmd+Shift+Command+a")).toEqual([["Cmd", "Shift", "Command"], ["a"]])
-   }) 
+    it("should work with non-normalized Modifiers", () => {
+      expect(split("Cmd+Shift+Command+a")).toEqual([["Cmd", "Shift", "Command"], ["a"]])
+    })
 
-   it("should work regardless of the order", () => {
-    expect(split("Cmd+a+Shift")).toEqual([["Cmd", "Shift"], ["a"]])
-   }) 
+    it("should work regardless of the order", () => {
+      expect(split("Cmd+a+Shift")).toEqual([["Cmd", "Shift"], ["a"]])
+    })
 
   })
 
@@ -39,11 +39,11 @@ describe("utils", () => {
     })
 
     it("should remove duplicates", () => {
-      expect(normalizeModifiers(["Cmd", "Shift", "Cmd", "Super", "Alt" ])).toEqual(["Cmd", "Shift", "Super", "Alt" ])
+      expect(normalizeModifiers(["Cmd", "Shift", "Cmd", "Super", "Alt"])).toEqual(["Cmd", "Shift", "Super", "Alt"])
     })
 
     it("should normalize modifiers", () => {
-      expect(normalizeModifiers(["Cmd", "Shift", "Command", "Super", "Control" ])).toEqual(["Cmd", "Shift", "Super", "Ctrl" ])
+      expect(normalizeModifiers(["Cmd", "Shift", "Command", "Super", "Control"])).toEqual(["Cmd", "Shift", "Super", "Ctrl"])
     })
 
   })
@@ -113,6 +113,35 @@ describe("utils", () => {
       expect(normalizeModifier("Shift")).toEqual("Shift")
       expect(normalizeModifier("AltGr")).toEqual("AltGr")
       expect(normalizeModifier("Super")).toEqual("Super")
+    })
+
+  })
+
+  describe("normalizeNonModifier", () => {
+
+    it("should normalize Return", () => {
+      expect(normalizeNonModifier("Return")).toEqual("Enter")
+    })
+
+    it("should normalize Esc", () => {
+      expect(normalizeNonModifier("Esc")).toEqual("Escape")
+    })
+
+    it("should keep everything else untouched", () => {
+      [
+        "a",
+        "A",
+        "1",
+        "F1",
+        ";",
+        ":",
+        "Plus",
+        "Space",
+        "Enter",
+        "Escape",
+      ].forEach(
+        n => expect(normalizeNonModifier(n as NonModifier)).toEqual(n)
+      )
     })
 
   })
