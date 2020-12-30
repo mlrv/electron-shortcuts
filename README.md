@@ -10,6 +10,8 @@ Under the hood, [Template Literal Types](https://www.typescriptlang.org/docs/han
 
 The main focus of the library is to provide a small set of APIs that are expressive, orthogonal, and safe to use at compile time.
 
+Documentation is automatically generated via [Typedoc](https://typedoc.org/) and can be found [here](https://electron-shortcuts.surge.sh).
+
 **Note that Typescript 4.1.0 or greater is required for Template Literal Types.**
 
 ## Usage
