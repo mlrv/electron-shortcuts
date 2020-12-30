@@ -11,7 +11,7 @@
     "test:unit": "npm run build && jest --config jestconfig.json ./src/test/unit",
     "test:e2e": "npm run build && jest --config jestconfig.json --runInBand ./src/test/e2e",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test: unit"
+    "prepublishOnly": "npm run test:unit"
   },
   "files": [
     "/dist/src/main"
